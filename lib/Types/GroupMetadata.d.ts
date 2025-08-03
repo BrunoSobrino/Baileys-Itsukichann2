@@ -1,10 +1,11 @@
 import { Contact } from './Contact'
 
-export type GroupParticipant = (Contact & {
+export type GroupParticipant = Contact & {
     isAdmin?: boolean
     isSuperAdmin?: boolean
-    admin?: 'admin' | 'superadmin' | null
-})
+    admin?: 'admin' | 'superadmin' | 'member' | null
+    lid?: string // Agregado para soporte de lid
+}
 
 export type ParticipantAction = 'add' | 'remove' | 'promote' | 'demote' | 'modify'
 
@@ -14,18 +15,25 @@ export type RequestJoinMethod = 'invite_link' | 'linked_group_join' | 'non_admin
 
 export interface GroupMetadata {
     id: string
-    addressingMode: string
+    jid?: string // Agregado para jid
+    lid?: string // Agregado para lid
+    /** group uses 'lid' or 'pn' to send messages */
+    addressingMode: 'pn' | 'lid'
     owner: string | undefined
-    ownerCountry: string, 
+    ownerJid?: string | undefined // Agregado ownerJid
+    ownerCountry?: string
     subject: string
     /** group subject owner */
     subjectOwner?: string
+    subjectOwnerJid?: string
     /** group subject modification date */
     subjectTime?: number
     creation?: number
     desc?: string
     descOwner?: string
+    descOwnerJid?: string
     descId?: string
+    descTime?: number
     /** if this group is part of a community, it returns the jid of the community to which it belongs */
     linkedParent?: string
     /** is set when the group only allows admins to change group settings */
@@ -53,14 +61,21 @@ export interface GroupMetadata {
 export interface WAGroupCreateResponse {
     status: number
     gid?: string
-    participants?: [{
-        [key: string]: {}
-    }]
+    participants?: [{ [key: string]: {} }]
 }
 
 export interface GroupModificationResponse {
     status: number
-    participants?: {
-        [key: string]: {}
-    }
+    participants?: { [key: string]: {} }
+}
+
+// Tipos adicionales para mejor soporte de lid
+export interface GroupMetadataLid extends GroupMetadata {
+    addressingMode: 'lid'
+    ownerJid: string
+    participants: (GroupParticipant & { lid: string })[]
+}
+
+export interface GroupMetadataPn extends GroupMetadata {
+    addressingMode: 'pn'
 }
