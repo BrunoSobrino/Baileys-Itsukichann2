@@ -4,7 +4,7 @@ export type GroupParticipant = Contact & {
     isAdmin?: boolean
     isSuperAdmin?: boolean
     admin?: 'admin' | 'superadmin' | 'member' | null
-    lid?: string // Agregado para soporte de lid
+    lid?: string // Added for lid support
 }
 
 export type ParticipantAction = 'add' | 'remove' | 'promote' | 'demote' | 'modify'
@@ -15,13 +15,10 @@ export type RequestJoinMethod = 'invite_link' | 'linked_group_join' | 'non_admin
 
 export interface GroupMetadata {
     id: string
-    jid?: string // Agregado para jid
-    lid?: string // Agregado para lid
     /** group uses 'lid' or 'pn' to send messages */
     addressingMode: 'pn' | 'lid'
     owner: string | undefined
-    ownerJid?: string | undefined // Agregado ownerJid
-    ownerCountry?: string
+    ownerJid?: string | undefined
     subject: string
     /** group subject owner */
     subjectOwner?: string
@@ -50,12 +47,15 @@ export interface GroupMetadata {
     isCommunityAnnounce?: boolean
     /** number of group participants */
     size?: number
+    // Baileys modified array
     participants: GroupParticipant[]
-    picture?: string
     ephemeralDuration?: number
     inviteCode?: string
     /** the person who added you to group or changed some setting in group */
     author?: string
+    // New properties added for lid support
+    ownerCountry?: string
+    picture?: string
 }
 
 export interface WAGroupCreateResponse {
@@ -69,7 +69,7 @@ export interface GroupModificationResponse {
     participants?: { [key: string]: {} }
 }
 
-// Tipos adicionales para mejor soporte de lid
+// Additional types for better lid support
 export interface GroupMetadataLid extends GroupMetadata {
     addressingMode: 'lid'
     ownerJid: string
